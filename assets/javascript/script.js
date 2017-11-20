@@ -38,14 +38,14 @@ $("#submit").on("click", function(event) {
   console.log(tNew.freq);
 
 
+alert('Train Added')
+
+$('#trainName').val('');
+$('#destination').val('');
+$('#firstTrain').val('');
+$('#freq').val('');
+
 });
-  alert('Train Added')
-
-  $('#trainName').val('');
-  $('#destination').val('');
-  $('#firstTrain').val('');
-  $('#freq').val('');
-
 
 database.ref().on("child_added", function(childSnapshot, prevChildKey) {
 
@@ -63,14 +63,36 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) {
   console.log(tFirst);
   console.log(tFreq);
 
-  // Add each train's data into the table
-  $("#trainTable > tbody").append("<tr><td>" + tName + "</td><td>" + tDest + "</td><td>" + tFreq + "</td><td>" + tFirst);
-})
+
+  var tArriv = moment().diff(moment.unix(tFreq, 'X'), "MM");
 
 
-   // + "</td><td>") + t + "</td><td>" + empRate + "</td><td>" + empBilled + "</td></tr>"
+ // //Giving values to these variables
+ 
+
+ var tFrequency= tFreq;
+ var firstTrain= tFirst;
+
+  // First time (pushed back 1 day to make sure it comes before current time and convert time)
+  var firstTimeConverted = moment(tFirst, "hh:mm").subtract(1, "days");
+  console.log(firstTimeConverted);
+  //current time
+
+  var currentTime = moment();
+  console.log("Current Time: " + moment(currentTime).format("hh:mm"));
+  // Difference between the times
+
+  var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
+  console.log("Difference in time: " + diffTime);
+
+  var tRemainder = diffTime % tFrequency;
+  console.log(tRemainder);
+
+  var tMinutesTillTrain= tFrequency - tRemainder;
+  console.log("Minutes till train: " + tMinutesTillTrain);
 
 
+  $("#trainTable > tbody").append("<tr><td>" + tName + "</td><td>" + tDest + "</td><td>" + tFreq 
+   + "</td><td>" + tFirst + "</td></tr>" + tMinutesTillTrain);
 
-
-
+});
